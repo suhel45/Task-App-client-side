@@ -8,6 +8,8 @@ import PrivateRoute from './component/PrivateRoute';
 import AddTask from './component/AddTask';
 import MyTask from './component/MyTask';
 import CompletedTask from './component/CompletedTask';
+import Update from './component/Update';
+import { Toaster } from 'react-hot-toast';
 
 
 function App() {
@@ -41,6 +43,11 @@ function App() {
           element:<Login></Login>
         },
         {
+          path:'/update/:id',
+          element:<Update></Update>,
+          loader:({params})=>fetch(`http://localhost:5000/my-task/${params.id}`)
+        },
+        {
           path:'/register',
           element:<Register></Register>
         },
@@ -50,6 +57,7 @@ function App() {
   return (
     <div className="App">
       <RouterProvider router={router}></RouterProvider>
+      <Toaster ></Toaster>
     </div>
   );
 }

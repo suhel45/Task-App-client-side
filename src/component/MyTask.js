@@ -1,7 +1,9 @@
 /** @format */
 
+import { useQuery } from "@tanstack/react-query";
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/UserContext";
 import CompletedTask from "./CompletedTask";
 
@@ -13,13 +15,14 @@ const MyTask = () => {
   console.log(user);
   console.log(orders);
 
-  useEffect(() => {
-    fetch(`https://task-app-server-side.vercel.app/my-task?email=${user?.email}`, {})
-      .then((res) => res.json())
-      .then((data) => {
-        setOrders(data);
-      });
-  }, [user?.email]);
+      const { data:tasks=[],refetch } = useQuery({
+        queryKey: ['my-task',`${user?.email}`],
+        queryFn: () =>
+          fetch(`https://task-app-server-side.vercel.app/my-task?email=${user?.email}`).then(
+            (res) => res.json(),
+          ),
+      })
+
 
   const hadleComplete = (ids, task) => {
     const completedTask = {
@@ -42,12 +45,23 @@ const MyTask = () => {
       fetch(`https://task-app-server-side.vercel.app/task/${ids}`,{
     method:'delete'
 })
-navigate('/completed-task')
+.then(res=>res.json())
+.then(data=>{
+  toast.success("Completed successfully")
+  refetch()
+})
   };
 
   const handleDelete = (id)=>{
     fetch(`https://task-app-server-side.vercel.app/task/${id}`,{
         method:'delete'
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      if(data.deletedCount>0){
+        toast.success("Delete successfully")
+           refetch()
+      }
     })
   }
   return (
@@ -63,12 +77,14 @@ navigate('/completed-task')
           </tr>
         </thead>
         <tbody>
-          {orders.map((order, i) => (
+          {tasks.map((order, i) => (
             <tr key={order._id}>
               <th>{i + 1}</th>
               <td>{order.task}</td>
               <td>
+                <Link to={`/update/${order._id}`}>
                 <button className="btn btn-info btn-sm">update</button>
+                </Link>
               </td>
               <td>
                 <button onClick={()=>handleDelete(order._id)} className="btn btn-error btn-sm">Delete</button>
