@@ -16,7 +16,7 @@ const Update = () => {
     const updatedTask={
         task:form.name.value
     }
-    fetch(`http://localhost:5000/update-task/${tasks._id}`,{
+    fetch(`https://task-app-server-side.vercel.app/update-task/${tasks._id}`,{
         method:"PUT",
         headers:{
             'content-type':'application/json'

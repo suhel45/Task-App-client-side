@@ -45,7 +45,7 @@ function App() {
         {
           path:'/update/:id',
           element:<Update></Update>,
-          loader:({params})=>fetch(`http://localhost:5000/my-task/${params.id}`)
+          loader:({params})=>fetch(`https://task-app-server-side.vercel.app/my-task/${params.id}`)
         },
         {
           path:'/register',
