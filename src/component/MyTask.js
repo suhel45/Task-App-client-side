@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/UserContext";
 import CompletedTask from "./CompletedTask";
+import Loader from "./Loader";
 
 const MyTask = () => {
   const { user } = useContext(AuthContext);
@@ -15,14 +16,14 @@ const MyTask = () => {
   console.log(user);
   console.log(orders);
 
-      const { data:tasks=[],refetch } = useQuery({
+      const { data:tasks=[],isLoading, refetch } = useQuery({
         queryKey: ['my-task',`${user?.email}`],
         queryFn: () =>
           fetch(`https://task-app-server-side.vercel.app/my-task?email=${user?.email}`).then(
             (res) => res.json(),
           ),
       })
-
+        if(isLoading){return <Loader></Loader>}
 
   const hadleComplete = (ids, task) => {
     const completedTask = {

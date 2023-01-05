@@ -4,18 +4,20 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/UserContext";
+import Loader from "./Loader";
 
 const CompletedTask = () => {
   const { user } = useContext(AuthContext);
   // const [completedTask, setCompletedTask] = useState([]);
 
-  const { data: completedTask = [], refetch } = useQuery({
+  const { data: completedTask,isLoading, refetch } = useQuery({
     queryKey: ["completed-task"],
     queryFn: () =>
       fetch(
         `https://task-app-server-side.vercel.app/completed-task?email=${user?.email}`
       ).then((res) => res.json()),
   });
+  if(isLoading){return <Loader></Loader>}
 
   const handleDelete = (id) => {
     fetch(`https://task-app-server-side.vercel.app/DeleteTask/${id}`, {
@@ -51,7 +53,7 @@ const CompletedTask = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        toast.success("Delete successfully");
+        toast.success("Added to My Task successfully");
         refetch();
       });
   };
